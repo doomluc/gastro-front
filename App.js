@@ -1,60 +1,26 @@
-import { useRef, useState } from "react";
-import {StyleSheet, TextInput, View} from "react-native";
-import Draggable from 'react-native-draggable';
-import {AddTable} from "./src/visual-components/AddTable";
-import {Table} from "./src/visual-components/Table";
-import {TableConstructorModal} from "./src/visual-components/TableConstructorModal";
+import {NavigationContainer} from "@react-navigation/native";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {HomeScreen} from "./src/navigation/HomeScreen"
+import {SignInScreen} from "./src/navigation/SignInScreen"
+import {SignUpScreen} from "./src/navigation/SignUpScreen"
+import {ProfileScreen} from "./src/navigation/ProfileScreen"
+import {useState} from "react";
 
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [tables, setTables] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [index, setIndex] = useState();
-
-    const addTable = (title) => {
-      const newTable = {
-          id: Date.now().toString(),
-          title: title,
-      };
-
-      setTables((prevTables) => {
-          return [
-              ...prevTables,
-              newTable,
-          ]
-      });
-  }
-
-  const invokeModal = (table) => {
-    setIndex(() => {
-        console.log(tables.indexOf(table))
-        return tables.indexOf(table);
-    })
-    setModalVisible(true);
-  }
+  const isSignedIn = useState(true);
 
   return (
-    <View style={styles.container}>
-        <TableConstructorModal table={tables[index]} setModalVisible={setModalVisible} modalVisible={modalVisible} />
-        <TextInput />
-        <AddTable onSubmit={addTable}/>
-
-        <View>
-            {tables.map(table =>
-                (<Table
-                    table={table}
-                    key={table.id}
-                    invokeModal={invokeModal}
-                />)
-            )}
-        </View>
-    </View>
+  <NavigationContainer>
+      <Stack.Navigator initialRouteName="SignIn">
+          <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Overview' }} />
+          <Stack.Screen name="Details" component={ProfileScreen} />
+          <Stack.Screen options={{title: 'SignIn'}} name="SignIn" component={SignInScreen} />
+          <Stack.Screen options={{title: 'SignUp'}} name="SignUp" component={SignUpScreen} />
+      </Stack.Navigator>
+  </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "grey",
-  },
-});
+
